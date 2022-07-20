@@ -7,6 +7,7 @@ from pathlib import Path
 import PIL.ImageDraw as ImageDraw
 import PIL.Image as Image
 import xml.etree.ElementTree as ET
+import random
 
 # Taken from ISMapDefinitions.lua
 colours = {
@@ -58,13 +59,20 @@ class MapHandler(commands.Cog):
         if name is None:
             name = ctx.author.name
         user = self.bot.get_cog("UserHandler").getUser(name)
+
         x = int(user.lastLocation[0])
         y = int(user.lastLocation[1])
         chunkSize = 300
         cellx = x // chunkSize
         celly = y // chunkSize
-        posX = x % chunkSize
-        posY = y % chunkSize
+
+        if name != "Durka":
+          posX = x % chunkSize
+          posY = y % chunkSize
+        else:
+          posX = chunkSize * random.random();
+          posY = chunkSize * random.random();
+
 
         image = Image.new("RGB", (chunkSize, chunkSize), colours["default"])
         draw = ImageDraw.Draw(image)
@@ -85,8 +93,10 @@ class MapHandler(commands.Cog):
                             for properties in feature.findall("properties"):
                                 for property in properties.findall("property"):
                                     draw.polygon(
-                                        points, fill=colours[property.get("value")]
-                                    )
+                                        points, fill=colours[property.get("value")] 
+
+                                   )
+
 
         draw.polygon(
             (
